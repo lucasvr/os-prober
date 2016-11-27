@@ -107,7 +107,7 @@ rm -f $LIB_DIR/labels
 
 for prog in $LIB_DIR/probes/os/init/*; do
     if [ -x "$prog" ] && [ -f "$prog" ]; then
-        echo "Running init probe $(basename $prog)..."
+        debug "Running init probe $(basename $prog)..."
         "$prog" || true
     fi
 done
@@ -149,7 +149,7 @@ for partition in $(partitions); do
             if [ -f "$test" ] && [ -x "$test" ]; then
                 debug "running $test on $partition"
                 if "$test" "$partition"; then
-                    echo "os detected by $test"
+                    debug "os detected by $test"
                     break
                 fi
             fi
@@ -164,7 +164,7 @@ for partition in $(partitions); do
                 if [ -f "$test" ] && [ -x "$test" ]; then
                     debug "running $test on mounted $partition"
                     if "$test" "$partition" "$mpoint" "$type"; then
-                        echo "os detected by $test"
+                        debug "os detected by $test"
                         break
                     fi
                 fi
