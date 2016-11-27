@@ -69,7 +69,7 @@ else
 fi
 
 if [ "$mounted" ]; then
-	for test in /usr/lib/os-probes/mounted/*; do
+	for test in /usr/lib/probes/os/mounted/*; do
 		debug "running subtest $test"
 		if [ -f "$test" ] && [ -x "$test" ]; then
 			if "$test" "$partition" "$tmpmnt" "$type"; then

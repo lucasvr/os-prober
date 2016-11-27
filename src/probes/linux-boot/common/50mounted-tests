@@ -55,7 +55,7 @@ if [ "$mounted" ]; then
 	bootpart="${mountboot%% *}"
 	mounted="${mountboot#* }"
 
-	for test in /usr/lib/linux-boot-probes/mounted/*; do
+	for test in /usr/lib/probes/linux-boot/mounted/*; do
 		if [ -f "$test" ] && [ -x "$test" ]; then
 			debug "running $test $partition $bootpart $tmpmnt $type"
 			if $test "$partition" "$bootpart" "$tmpmnt" "$type"; then

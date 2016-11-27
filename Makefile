@@ -48,7 +48,7 @@ install: all
 	mkdir -p $(LIB_DIR) $(BIN_DIR)
 	cp -r build/lib/* $(LIB_DIR)
 	cp -a build/bin/* $(BIN_DIR)
-	for probes in os os/init os/mounted; do \
+	for probes in os os/init os/mounted linux-boot/mounted; do \
 		mkdir -p $(LIB_DIR)/probes/$$probes; \
 		cp src/probes/$$probes/common/* $(LIB_DIR)/probes/$$probes; \
 		if [ -e "src/probes/$$probes/$(ARCH)" ]; then \
