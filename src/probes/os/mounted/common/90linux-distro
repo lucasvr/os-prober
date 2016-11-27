@@ -124,6 +124,9 @@ elif [ -e "$dir/etc/lfs-release" ]; then
 elif [ -e "$dir/etc/meego-release" ]; then
     short="MeeGo"
     long="$(head -1 "$dir/etc/meego-release")"
+elif [ -e "$dir/etc/GoboLinuxVersion" ]; then
+    short="GoboLinux"
+    long="$(printf "GoboLinux %s\n" "$(cat "$dir/etc/GoboLinuxVersion")")"
 elif (ls "$dir"/lib*/ld*.so* || ls "$dir"/usr/lib*/ld*.so*) >/dev/null 2>/dev/null; then
     short="Linux"
     long="unknown Linux distribution"
