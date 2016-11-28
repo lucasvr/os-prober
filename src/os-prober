@@ -114,7 +114,7 @@ done
 
 print_mounted_devices () {
     rootdev=$(cat /proc/cmdline | sed 's,.*\(root=/dev/[a-z0-9]*\).*,\1,g' | cut -d= -f2)
-    grep "^/dev/" /proc/mounts | sed "s,/dev/root,$rootdev,g" | sed "s,/System/Kernel/Devices,/dev,g"
+    grep "^/dev/\|^/System/Kernel/Devices" /proc/mounts | sed -e "s,/System/Kernel/Devices,/dev,g" -e "s,/dev/root,$rootdev,g"
 }
 
 # We need to properly canonicalize partitions with mount points and partitions
