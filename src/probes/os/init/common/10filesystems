@@ -9,7 +9,12 @@ FILESYSTEMS="$FILESYSTEMS fuse"
 # fs-{core,secondary}-modules. It's fairly cheap to check for these too.
 FILESYSTEMS="$FILESYSTEMS fs-core fs-secondary"
 
-if [ ! -e /var/lib/os-prober/modules ]; then
+proberdir=/var/lib/os-prober
+if [ ! -d "$proberdir" ]; then
+	mkdir -p "$proberdir"
+fi
+
+if [ ! -e $proberdir/modules ]; then
 	# Check for anna-install to make it easier to use os-prober outside
 	# d-i.
 	if type anna-install >/dev/null 2>&1 && [ -d /lib/debian-installer ]; then
@@ -34,6 +39,6 @@ if [ ! -e /var/lib/os-prober/modules ]; then
 	# We only want to keep this state inside d-i, so this is as good a
 	# check as any.
 	if type anna-install >/dev/null 2>&1 && [ -d /lib/debian-installer ]; then
-		touch /var/lib/os-prober/modules
+		touch $proberdir/modules
 	fi
 fi
