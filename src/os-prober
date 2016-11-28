@@ -112,9 +112,14 @@ for prog in $LIB_DIR/probes/os/init/*; do
     fi
 done
 
+print_mounted_devices () {
+    rootdev=$(cat /proc/cmdline | sed 's,.*\(root=/dev/[a-z0-9]*\).*,\1,g' | cut -d= -f2)
+    grep "^/dev/" /proc/mounts | sed "s,/dev/root,$rootdev,g"
+}
+
 # We need to properly canonicalize partitions with mount points and partitions
 # used in RAID
-grep "^/dev/" /proc/mounts | parse_proc_mounts >"$OS_PROBER_TMP/mounted-map" || true
+print_mounted_devices | parse_proc_mounts >"$OS_PROBER_TMP/mounted-map" || true
 : >"$OS_PROBER_TMP/swaps-map"
 if [ -f /proc/swaps ]; then
     grep "^/dev/" /proc/swaps | parse_proc_swaps >"$OS_PROBER_TMP/swaps-map" || true
