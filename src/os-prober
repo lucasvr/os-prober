@@ -3,7 +3,7 @@ set -e
 
 replace LIB_DIR
 
-. $LIB_DIR/common.sh
+. /usr/share/os-prober/common.sh
 
 newns "$@"
 require_tmpdir
