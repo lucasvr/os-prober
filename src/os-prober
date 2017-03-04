@@ -26,18 +26,26 @@ on_sataraid () {
     return 1
 }
 
+print_part_name () {
+    local part="$1"
+    local name="$(echo "${part##*/}" | sed 's,[!.],/,g')"
+    if [ -e "/dev/$name" ]; then
+       echo "/dev/$name"
+    fi
+}
+
 partitions () {
     # Exclude partitions that have whole_disk sysfs attribute set.
     if [ -d /sys/block ]; then
         # Exclude partitions on physical disks that are part of a
         # Serial ATA RAID disk.
-        for part in /sys/block/*/*[0-9]; do
+        for part in /sys/block/*/*[0-9] /sys/block/ram[0-9]*; do
             if [ -f "$part/start" ] && \
                [ ! -f "$part/whole_disk" ] && ! on_sataraid $part; then
-                name="$(echo "${part##*/}" | sed 's,[!.],/,g')"
-                if [ -e "/dev/$name" ]; then
-                    echo "/dev/$name"
-                fi
+                print_part_name "$part"
+            elif grep -q "DEVNAME=ram" "$part/uevent"
+            then
+                print_part_name "$part"
             fi
         done
 
