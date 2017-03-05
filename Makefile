@@ -18,7 +18,7 @@ ifeq "$(out)" ""
 else
 	export LIB_DIR := $(out)/lib
 	export BIN_DIR := $(out)/bin
-	export SHARE_DIR := $(out)/share/os-prober
+	export SHARE_DIR := $(out)/share
 endif
 
 all: build/bin/os-prober build/bin/linux-boot-prober build/lib/newns
@@ -50,6 +50,7 @@ install: all
 	mkdir -p $(LIB_DIR) $(BIN_DIR) $(SHARE_DIR)
 	cp -r build/lib/* $(LIB_DIR)
 	cp -a build/bin/* $(BIN_DIR)
+	cp -a build/share/* $(SHARE_DIR)
 	for probes in os os/init os/mounted linux-boot/mounted; do \
 		mkdir -p $(LIB_DIR)/probes/$$probes; \
 		cp src/probes/$$probes/common/* $(LIB_DIR)/probes/$$probes; \
