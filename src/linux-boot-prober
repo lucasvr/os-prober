@@ -15,9 +15,10 @@ if [ -z "$partition" ]; then
     exit 1
 fi
 
-if ! mapped="$(mapdevfs "$partition")"; then
+mapped="$(mapdevfs "$partition")"
+if [ ! -e "$mapped" ]; then
     log "Device '$partition' does not exist; skipping"
-    continue
+    exit 1
 fi
 
 if ! grep -q "^$mapped " "$OS_PROBER_TMP/mounted-map"; then
