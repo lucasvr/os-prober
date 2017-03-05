@@ -120,11 +120,6 @@ for prog in $LIB_DIR/probes/os/init/*; do
     fi
 done
 
-print_mounted_devices () {
-    rootdev=$(cat /proc/cmdline | sed 's,.*\(root=/dev/[a-z0-9]*\).*,\1,g' | cut -d= -f2)
-    grep "^/dev/\|^/System/Kernel/Devices" /proc/mounts | sed -e "s,/System/Kernel/Devices,/dev,g" -e "s,/dev/root,$rootdev,g"
-}
-
 # We need to properly canonicalize partitions with mount points and partitions
 # used in RAID
 print_mounted_devices | parse_proc_mounts >"$OS_PROBER_TMP/mounted-map" || true

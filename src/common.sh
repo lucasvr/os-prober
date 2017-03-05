@@ -118,6 +118,17 @@ fs_type () {
     fi
 }
 
+print_mounted_devices () {
+    if grep -q "root=PARTUUID" /proc/cmdline
+    then
+        rootuuid=$(cat /proc/cmdline | sed 's,.*\(root=PARTUUID=[a-z0-9\-]*\).*,\1,g' | cut -d= -f3)
+        rootdev=$(blkid -s PARTUUID | grep "$rootuuid" | cut -d: -f1)
+    else
+        rootdev=$(cat /proc/cmdline | sed 's,.*\(root=/dev/[a-z0-9]*\).*,\1,g' | cut -d= -f2)
+    fi
+    grep "^/dev/\|^/System/Kernel/Devices" /proc/mounts | sed -e "s,/System/Kernel/Devices,/dev,g" -e "s,/dev/root,$rootdev,g"
+}
+
 parse_proc_mounts () {
     while read -r line; do
         set -f
