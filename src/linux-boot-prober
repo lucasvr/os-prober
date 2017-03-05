@@ -6,7 +6,7 @@ set -e
 newns "$@"
 require_tmpdir
 
-grep "^/dev/" /proc/mounts | parse_proc_mounts >"$OS_PROBER_TMP/mounted-map" || true
+print_mounted_devices | parse_proc_mounts >"$OS_PROBER_TMP/mounted-map" || true
 
 partition="$1"
 
@@ -21,19 +21,23 @@ if [ ! -e "$mapped" ]; then
     exit 1
 fi
 
+need_unmount=0
 if ! grep -q "^$mapped " "$OS_PROBER_TMP/mounted-map"; then
-    for test in $(find /usr/lib/probes/linux-boot/ -type f); do
-        debug "running $test"
-        if [ -x $test ]; then
-            if $test "$partition"; then
-                debug "linux detected by $test"
-                break
-            fi
-        fi
-    done
+    mpoint=$(mktemp -d)
+    debug "mounting $partition on $mpoint"
+    if ! grub-mount "$partition" "$mpoint"; then
+        debug "failed to mount $partition; skipping"
+        rmdir "$mpoint"
+        exit 1
+    fi
+    grep "^/dev/" /proc/mounts | parse_proc_mounts >"$OS_PROBER_TMP/mounted-map" || true
+    need_unmount=1
 else
     mpoint=$(grep "^$mapped " "$OS_PROBER_TMP/mounted-map" | head -n1 | cut -d " " -f 2)
     mpoint="$(unescape_mount "$mpoint")"
+fi
+
+if [ true ]; then
     if [ "$mpoint" != "/target/boot" ] && [ "$mpoint" != "/target" ] && [ "$mpoint" != "/" ]; then
         type=$(grep "^$mapped " "$OS_PROBER_TMP/mounted-map" | head -n1 | cut -d " " -f 3)
         if ! grep -q " $mpoint/boot " "$OS_PROBER_TMP/mounted-map"; then
@@ -59,4 +63,12 @@ else
             fi
         fi
     fi
+fi
+
+if [ $need_unmount = 1 ]; then
+    debug "unmounting $mpoint"
+    if ! umount "$mpoint"; then
+        warn "failed to unmount $mpoint"
+    fi
+    rmdir "$mpoint"
 fi
