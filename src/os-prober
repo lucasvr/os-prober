@@ -43,7 +43,7 @@ partitions () {
             if [ -f "$part/start" ] && \
                [ ! -f "$part/whole_disk" ] && ! on_sataraid $part; then
                 print_part_name "$part"
-            elif grep -q "DEVNAME=ram" "$part/uevent"
+            elif grep -q "DEVNAME=ram" "$part/uevent" 2> /dev/null
             then
                 print_part_name "$part"
             fi
